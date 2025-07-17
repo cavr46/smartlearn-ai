@@ -43,7 +43,7 @@ Make sure questions are relevant to the content and appropriate for the {difficu
 ";
 
         var response = await _openAIClient.GetChatCompletionsAsync(
-            new ChatCompletionsOptions(_deploymentName, new[]
+            new ChatCompletionsOptions(_deploymentName, new ChatRequestMessage[]
             {
                 new ChatRequestSystemMessage("You are an expert quiz creator. Create high-quality educational quizzes."),
                 new ChatRequestUserMessage(prompt)
@@ -80,7 +80,7 @@ Make sure questions test comprehension of the material presented in the video.
 ";
 
         var response = await _openAIClient.GetChatCompletionsAsync(
-            new ChatCompletionsOptions(_deploymentName, new[]
+            new ChatCompletionsOptions(_deploymentName, new ChatRequestMessage[]
             {
                 new ChatRequestSystemMessage("You are an expert quiz creator specializing in video content assessment."),
                 new ChatRequestUserMessage(prompt)
@@ -107,7 +107,7 @@ The summary should:
 ";
 
         var response = await _openAIClient.GetChatCompletionsAsync(
-            new ChatCompletionsOptions(_deploymentName, new[]
+            new ChatCompletionsOptions(_deploymentName, new ChatRequestMessage[]
             {
                 new ChatRequestSystemMessage("You are an expert at creating educational summaries."),
                 new ChatRequestUserMessage(prompt)
@@ -133,7 +133,7 @@ Provide a detailed explanation of why this answer is correct. Include:
 ";
 
         var response = await _openAIClient.GetChatCompletionsAsync(
-            new ChatCompletionsOptions(_deploymentName, new[]
+            new ChatCompletionsOptions(_deploymentName, new ChatRequestMessage[]
             {
                 new ChatRequestSystemMessage("You are an expert educator providing detailed explanations."),
                 new ChatRequestUserMessage(prompt)

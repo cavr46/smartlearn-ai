@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SmartLearn.Application.Commands.Auth;
-using SmartLearn.Application.DTOs.Auth;
 
 namespace SmartLearn.API.Controllers;
 
@@ -17,29 +16,15 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<AuthResponseDto>> Register(RegisterDto request)
+    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
     {
-        var command = new RegisterCommand
-        {
-            Email = request.Email,
-            Password = request.Password,
-            FirstName = request.FirstName,
-            LastName = request.LastName
-        };
-
         var result = await _mediator.Send(command);
         return Ok(result);
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AuthResponseDto>> Login(LoginDto request)
+    public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var command = new LoginCommand
-        {
-            Email = request.Email,
-            Password = request.Password
-        };
-
         var result = await _mediator.Send(command);
         return Ok(result);
     }

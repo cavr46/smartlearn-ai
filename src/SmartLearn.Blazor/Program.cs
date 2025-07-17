@@ -1,8 +1,6 @@
 using SmartLearn.Blazor.Components;
-using SmartLearn.Blazor.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
-using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,15 +9,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddMudServices();
-builder.Services.AddBlazoredLocalStorage();
-
-// Add HttpClient for API calls
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7001/") });
-
-// Add authentication services
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddAuthorizationCore();
 
 var app = builder.Build();
 

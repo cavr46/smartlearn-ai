@@ -1,74 +1,48 @@
 @page "/login"
-@using SmartLearn.Blazor.Services
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthService AuthService
-@inject NavigationManager Navigation
-@inject IJSRuntime JSRuntime
 
-<PageTitle>Login - SmartLearn AI</PageTitle>
+<PageTitle>Iniciar Sesión</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
-    <MudCard>
-        <MudCardContent>
-            <MudForm @ref="form" Model="@model" @onsubmit="OnSubmit">
-                <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">
-                    Welcome to SmartLearn AI
-                </MudText>
-                
-                <MudTextField 
-                    @bind-Value="model.Email"
-                    Label="Email"
-                    Variant="Variant.Outlined"
-                    InputType="InputType.Email"
-                    Required="true"
-                    RequiredError="Email is required"
-                    Class="mb-4" />
-                
-                <MudTextField 
-                    @bind-Value="model.Password"
-                    Label="Password"
-                    Variant="Variant.Outlined"
-                    InputType="InputType.Password"
-                    Required="true"
-                    RequiredError="Password is required"
-                    Class="mb-4" />
-                
-                <MudButton 
-                    ButtonType="ButtonType.Submit" 
-                    Variant="Variant.Filled" 
-                    Color="Color.Primary" 
-                    FullWidth="true"
-                    Class="mb-4">
-                    Login
-                </MudButton>
-                
-                <MudText Align="Align.Center">
-                    Don't have an account? 
-                    <MudLink Href="/register">Register here</MudLink>
-                </MudText>
-            </MudForm>
-        </MudCardContent>
-    </MudCard>
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Class="pa-4">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">Iniciar Sesión</MudText>
+        
+        <EditForm Model="@loginModel" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <MudTextField @bind-Value="loginModel.Email" 
+                         Label="Email" 
+                         Variant="Variant.Outlined" 
+                         For="@(() => loginModel.Email)" />
+            
+            <MudTextField @bind-Value="loginModel.Password" 
+                         Label="Contraseña" 
+                         Variant="Variant.Outlined" 
+                         InputType="InputType.Password" 
+                         For="@(() => loginModel.Password)" />
+            
+            <MudButton ButtonType="ButtonType.Submit" 
+                      Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      Class="mt-3" 
+                      FullWidth="true">
+                Iniciar Sesión
+            </MudButton>
+        </EditForm>
+    </MudPaper>
 </MudContainer>
 
 @code {
-    private MudForm form;
-    private LoginDto model = new();
+    private LoginModel loginModel = new();
 
-    private async Task OnSubmit()
+    private async Task OnValidSubmit()
     {
-        if (form.IsValid)
-        {
-            var success = await AuthService.LoginAsync(model);
-            
-            if (success)
-            {
-                Navigation.NavigateTo("/dashboard");
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("alert", "Login failed. Please check your credentials.");
-            }
-        }
+        // TODO: Implementar lógica de login
+        await Task.CompletedTask;
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }
