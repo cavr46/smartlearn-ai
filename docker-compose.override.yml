@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  smartlearn-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "7001:80"
+    volumes:
+      - ./src/SmartLearn.API:/app/src
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+    depends_on:
+      - sqlserver
+      - redis
+
+  smartlearn-blazor:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5001:80"
+    volumes:
+      - ./src/SmartLearn.Blazor:/app/src
+
+  # Development SQL Server with additional settings
+  sqlserver:
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SmartLearn123!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
+
+  # Development Redis with Redis Commander
+  redis:
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Redis Commander for development
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: smartlearn-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - smartlearn-network
+
+  # PgAdmin for development (if using PostgreSQL)
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: smartlearn-pgadmin
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@smartlearn.ai
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - smartlearn-network
+
+  # Mailhog for development email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: smartlearn-mailhog
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    networks:
+      - smartlearn-network
+
+  # Seq for structured logging in development
+  seq:
+    image: datalust/seq:latest
+    container_name: smartlearn-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+    volumes:
+      - seq_data:/data
+    networks:
+      - smartlearn-network
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: smartlearn-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # Jaeger collector
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - smartlearn-network
+
+volumes:
+  seq_data:

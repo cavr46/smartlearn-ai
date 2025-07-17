@@ -1,0 +1,144 @@
+@page "/"
+@using SmartLearn.Application.DTOs
+@inject ICourseService CourseService
+@inject NavigationManager Navigation
+
+<PageTitle>SmartLearn AI - Transform Your Learning Journey</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <!-- Hero Section -->
+    <MudPaper Class="pa-8 mb-6" Elevation="2">
+        <MudGrid AlignItems="Center">
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.h2" Class="mb-4" Color="Color.Primary">
+                    🚀 Transform Your Learning Journey with AI
+                </MudText>
+                <MudText Typo="Typo.h6" Class="mb-4" Color="Color.Secondary">
+                    Experience personalized education powered by cutting-edge AI technology. 
+                    Learn faster, retain more, and achieve your goals with SmartLearn AI.
+                </MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" 
+                          OnClick="@(() => Navigation.NavigateTo("/courses"))" Class="mr-4">
+                    Explore Courses
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Large"
+                          OnClick="@(() => Navigation.NavigateTo("/register"))">
+                    Get Started Free
+                </MudButton>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudImage Src="https://via.placeholder.com/600x400?text=AI+Learning+Platform" 
+                         Alt="AI Learning Platform" Width="100%" />
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Features Section -->
+    <MudText Typo="Typo.h4" Class="mb-6 text-center">🎯 AI-Powered Learning Features</MudText>
+    
+    <MudGrid Class="mb-8">
+        <MudItem xs="12" md="4">
+            <MudCard Class="pa-4 h-100">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Class="mb-2">🤖 Auto-Generated Quizzes</MudText>
+                    <MudText Typo="Typo.body2">
+                        AI creates personalized quizzes from your lesson content to reinforce learning and test comprehension.
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        
+        <MudItem xs="12" md="4">
+            <MudCard Class="pa-4 h-100">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Class="mb-2">🎙️ Smart Transcription</MudText>
+                    <MudText Typo="Typo.body2">
+                        Automatic video transcription with Azure Speech Services for accessibility and searchable content.
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        
+        <MudItem xs="12" md="4">
+            <MudCard Class="pa-4 h-100">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Class="mb-2">📊 Learning Analytics</MudText>
+                    <MudText Typo="Typo.body2">
+                        Track progress, identify knowledge gaps, and get personalized recommendations for optimal learning.
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Featured Courses -->
+    <MudText Typo="Typo.h4" Class="mb-4">⭐ Featured Courses</MudText>
+    
+    @if (featuredCourses == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var course in featuredCourses)
+            {
+                <MudItem xs="12" md="6" lg="4">
+                    <MudCard Class="h-100">
+                        <MudCardMedia Image="@(course.ThumbnailUrl ?? "https://via.placeholder.com/400x200?text=Course+Image")" 
+                                     Height="200" />
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6" Class="mb-2">@course.Title</MudText>
+                            <MudText Typo="Typo.body2" Class="mb-2">@course.ShortDescription</MudText>
+                            <MudText Typo="Typo.caption" Class="mb-2">by @course.Instructor.FullName</MudText>
+                            <MudText Typo="Typo.h6" Color="Color.Primary">@course.Price.ToString("C")</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" 
+                                      OnClick="@(() => Navigation.NavigateTo($"/courses/{course.Id}"))">
+                                Learn More
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+
+    <!-- Stats Section -->
+    <MudPaper Class="pa-8 mt-8 text-center" Elevation="2">
+        <MudText Typo="Typo.h4" Class="mb-6">📈 Join Thousands of Learners</MudText>
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.h3" Color="Color.Primary">10,000+</MudText>
+                <MudText Typo="Typo.h6">Students Enrolled</MudText>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.h3" Color="Color.Primary">500+</MudText>
+                <MudText Typo="Typo.h6">Courses Available</MudText>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.h3" Color="Color.Primary">95%</MudText>
+                <MudText Typo="Typo.h6">Satisfaction Rate</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<CourseDto>? featuredCourses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            featuredCourses = await CourseService.GetFeaturedCoursesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Handle error - in production, you'd want proper error handling
+            Console.WriteLine($"Error loading featured courses: {ex.Message}");
+            featuredCourses = Enumerable.Empty<CourseDto>();
+        }
+    }
+}

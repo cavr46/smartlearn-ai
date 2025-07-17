@@ -1,0 +1,51 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLearn.Domain", "src\SmartLearn.Domain\SmartLearn.Domain.csproj", "{D1D1D1D1-1111-1111-1111-111111111111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLearn.Application", "src\SmartLearn.Application\SmartLearn.Application.csproj", "{A2A2A2A2-2222-2222-2222-222222222222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLearn.Infrastructure", "src\SmartLearn.Infrastructure\SmartLearn.Infrastructure.csproj", "{I3I3I3I3-3333-3333-3333-333333333333}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLearn.API", "src\SmartLearn.API\SmartLearn.API.csproj", "{A4A4A4A4-4444-4444-4444-444444444444}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLearn.Blazor", "src\SmartLearn.Blazor\SmartLearn.Blazor.csproj", "{B5B5B5B5-5555-5555-5555-555555555555}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1D1D1D1-1111-1111-1111-111111111111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D1D1D1-1111-1111-1111-111111111111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D1D1D1-1111-1111-1111-111111111111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D1D1D1-1111-1111-1111-111111111111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2A2A2A2-2222-2222-2222-222222222222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A2A2A2-2222-2222-2222-222222222222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A2A2A2-2222-2222-2222-222222222222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A2A2A2-2222-2222-2222-222222222222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{I3I3I3I3-3333-3333-3333-333333333333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{I3I3I3I3-3333-3333-3333-333333333333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{I3I3I3I3-3333-3333-3333-333333333333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{I3I3I3I3-3333-3333-3333-333333333333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A4A4A4-4444-4444-4444-444444444444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A4A4A4-4444-4444-4444-444444444444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A4A4A4-4444-4444-4444-444444444444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A4A4A4-4444-4444-4444-444444444444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5B5B5B5-5555-5555-5555-555555555555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5B5B5B5-5555-5555-5555-555555555555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5B5B5B5-5555-5555-5555-555555555555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5B5B5B5-5555-5555-5555-555555555555}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D1D1D1D1-1111-1111-1111-111111111111} = {AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}
+		{A2A2A2A2-2222-2222-2222-222222222222} = {AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}
+		{I3I3I3I3-3333-3333-3333-333333333333} = {AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}
+		{A4A4A4A4-4444-4444-4444-444444444444} = {AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}
+		{B5B5B5B5-5555-5555-5555-555555555555} = {AC4E4C3C-E4A8-4B2E-9C3C-F5F9C5C5C5C5}
+	EndGlobalSection
+EndGlobal

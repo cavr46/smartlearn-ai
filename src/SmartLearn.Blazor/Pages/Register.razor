@@ -1,0 +1,109 @@
+@page "/register"
+@using SmartLearn.Application.DTOs
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Register - SmartLearn AI</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Class="pa-8 mt-8" Elevation="2">
+        <MudText Typo="Typo.h4" Class="mb-6 text-center">Join SmartLearn AI</MudText>
+        
+        <EditForm Model="@registerModel" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <MudTextField Label="First Name" 
+                         @bind-Value="registerModel.FirstName" 
+                         For="@(() => registerModel.FirstName)"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudTextField Label="Last Name" 
+                         @bind-Value="registerModel.LastName" 
+                         For="@(() => registerModel.LastName)"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudTextField Label="Email" 
+                         @bind-Value="registerModel.Email" 
+                         For="@(() => registerModel.Email)"
+                         InputType="InputType.Email"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudTextField Label="Password" 
+                         @bind-Value="registerModel.Password" 
+                         For="@(() => registerModel.Password)"
+                         InputType="InputType.Password"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudTextField Label="Confirm Password" 
+                         @bind-Value="registerModel.ConfirmPassword" 
+                         For="@(() => registerModel.ConfirmPassword)"
+                         InputType="InputType.Password"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudSelect @bind-Value="registerModel.Role" 
+                      Label="I am a..." 
+                      Variant="Variant.Outlined" 
+                      Class="mb-4">
+                <MudSelectItem Value="@("Student")">Student</MudSelectItem>
+                <MudSelectItem Value="@("Instructor")">Instructor</MudSelectItem>
+            </MudSelect>
+            
+            <MudButton ButtonType="ButtonType.Submit" 
+                      Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      FullWidth="true"
+                      Class="mb-4"
+                      Disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+                    <span>Creating account...</span>
+                }
+                else
+                {
+                    <span>Create Account</span>
+                }
+            </MudButton>
+            
+            <ValidationSummary />
+        </EditForm>
+        
+        <MudDivider Class="my-4" />
+        
+        <MudText Typo="Typo.body2" Class="text-center">
+            Already have an account? 
+            <MudLink Href="/login">Login here</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private RegisterRequestDto registerModel = new() { Role = "Student" };
+    private bool _isLoading = false;
+
+    private async Task OnValidSubmit()
+    {
+        _isLoading = true;
+        
+        try
+        {
+            await AuthService.RegisterAsync(registerModel);
+            Snackbar.Add("Registration successful! Welcome to SmartLearn AI!", Severity.Success);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Registration failed: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

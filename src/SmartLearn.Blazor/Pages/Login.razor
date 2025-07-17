@@ -1,0 +1,86 @@
+@page "/login"
+@using SmartLearn.Application.DTOs
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Login - SmartLearn AI</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Class="pa-8 mt-8" Elevation="2">
+        <MudText Typo="Typo.h4" Class="mb-6 text-center">Welcome Back!</MudText>
+        
+        <EditForm Model="@loginModel" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <MudTextField Label="Email" 
+                         @bind-Value="loginModel.Email" 
+                         For="@(() => loginModel.Email)"
+                         InputType="InputType.Email"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudTextField Label="Password" 
+                         @bind-Value="loginModel.Password" 
+                         For="@(() => loginModel.Password)"
+                         InputType="InputType.Password"
+                         Variant="Variant.Outlined" 
+                         Class="mb-4" />
+            
+            <MudCheckBox @bind-Checked="loginModel.RememberMe" 
+                        Label="Remember me" 
+                        Class="mb-4" />
+            
+            <MudButton ButtonType="ButtonType.Submit" 
+                      Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      FullWidth="true"
+                      Class="mb-4"
+                      Disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+                    <span>Logging in...</span>
+                }
+                else
+                {
+                    <span>Login</span>
+                }
+            </MudButton>
+            
+            <ValidationSummary />
+        </EditForm>
+        
+        <MudDivider Class="my-4" />
+        
+        <MudText Typo="Typo.body2" Class="text-center">
+            Don't have an account? 
+            <MudLink Href="/register">Register here</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private LoginRequestDto loginModel = new();
+    private bool _isLoading = false;
+
+    private async Task OnValidSubmit()
+    {
+        _isLoading = true;
+        
+        try
+        {
+            await AuthService.LoginAsync(loginModel);
+            Snackbar.Add("Login successful!", Severity.Success);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Login failed: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

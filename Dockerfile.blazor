@@ -1,0 +1,35 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy csproj files and restore dependencies
+COPY ["src/SmartLearn.Blazor/SmartLearn.Blazor.csproj", "src/SmartLearn.Blazor/"]
+COPY ["src/SmartLearn.Domain/SmartLearn.Domain.csproj", "src/SmartLearn.Domain/"]
+
+RUN dotnet restore "src/SmartLearn.Blazor/SmartLearn.Blazor.csproj"
+
+# Copy everything else and build
+COPY . .
+WORKDIR "/src/src/SmartLearn.Blazor"
+RUN dotnet build "SmartLearn.Blazor.csproj" -c Release -o /app/build
+
+# Publish stage
+FROM build AS publish
+RUN dotnet publish "SmartLearn.Blazor.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Runtime stage
+FROM nginx:alpine AS final
+WORKDIR /usr/share/nginx/html
+
+# Copy published app
+COPY --from=publish /app/publish/wwwroot .
+
+# Copy nginx configuration
+COPY nginx-blazor.conf /etc/nginx/nginx.conf
+
+# Expose port
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1

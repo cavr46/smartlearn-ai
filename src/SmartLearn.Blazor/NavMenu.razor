@@ -1,0 +1,36 @@
+@using Microsoft.AspNetCore.Components.Authorization
+
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="/courses" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.School">Courses</MudNavLink>
+    
+    <AuthorizeView>
+        <Authorized>
+            <AuthorizeView Roles="Student">
+                <MudNavLink Href="/my-learning" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.MenuBook">My Learning</MudNavLink>
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="Instructor,Admin">
+                <MudNavGroup Text="Instructor" Icon="@Icons.Material.Filled.Person" Expanded="false">
+                    <MudNavLink Href="/instructor/courses" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Create">My Courses</MudNavLink>
+                    <MudNavLink Href="/instructor/create-course" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Create Course</MudNavLink>
+                    <MudNavLink Href="/instructor/analytics" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Analytics">Analytics</MudNavLink>
+                </MudNavGroup>
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="Admin">
+                <MudNavGroup Text="Admin" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="false">
+                    <MudNavLink Href="/admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">Users</MudNavLink>
+                    <MudNavLink Href="/admin/courses" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.School">All Courses</MudNavLink>
+                    <MudNavLink Href="/admin/analytics" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+                </MudNavGroup>
+            </AuthorizeView>
+            
+            <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/login" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
+            <MudNavLink Href="/register" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PersonAdd">Register</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudNavMenu>
