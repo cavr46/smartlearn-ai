@@ -1,23 +1,23 @@
+using SmartLearn.Domain.Common;
+
 namespace SmartLearn.Domain.Entities;
 
-public class LessonProgress
+public class LessonProgress : BaseEntity
 {
-    public Guid Id { get; set; }
-    public DateTime StartedAt { get; set; } = DateTime.UtcNow;
+    public DateTime StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
-    public double Progress { get; set; } = 0.0;
-    public int TimeSpentMinutes { get; set; } = 0;
-    public DateTime LastAccessedAt { get; set; } = DateTime.UtcNow;
-    public bool IsCompleted { get; set; } = false;
-    public string? Notes { get; set; }
+    public int WatchedSeconds { get; set; }
+    public int TotalSeconds { get; set; }
+    public bool IsCompleted { get; set; }
+    public DateTime LastAccessedAt { get; set; }
     
-    // Foreign Keys
+    // Foreign keys
     public Guid UserId { get; set; }
     public Guid LessonId { get; set; }
-    public Guid EnrollmentId { get; set; }
     
     // Navigation properties
     public virtual User User { get; set; } = null!;
     public virtual Lesson Lesson { get; set; } = null!;
-    public virtual Enrollment Enrollment { get; set; } = null!;
+    
+    public decimal ProgressPercentage => TotalSeconds > 0 ? (decimal)WatchedSeconds / TotalSeconds * 100 : 0;
 }

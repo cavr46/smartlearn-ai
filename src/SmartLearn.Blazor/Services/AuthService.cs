@@ -1,21 +1,12 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using SmartLearn.Application.DTOs;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace SmartLearn.Blazor.Services;
 
-public interface IAuthService
-{
-    Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
-    Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request);
-    Task LogoutAsync();
-    Task<bool> IsAuthenticatedAsync();
-    Task<string?> GetTokenAsync();
-}
-
-public class AuthService : IAuthService
+public class AuthService
 {
     private readonly HttpClient _httpClient;
     private readonly ILocalStorageService _localStorage;
@@ -28,79 +19,106 @@ public class AuthService : IAuthService
         _authenticationStateProvider = authenticationStateProvider;
     }
 
-    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto request)
+    public async Task<bool> LoginAsync(LoginDto loginDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
-        
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            throw new ApplicationException($"Login failed: {errorContent}");
+            var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginDto);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                
+                if (authResponse != null)
+                {
+                    await _localStorage.SetItemAsync("accessToken", authResponse.AccessToken);
+                    await _localStorage.SetItemAsync("refreshToken", authResponse.RefreshToken);
+                    await _localStorage.SetItemAsync("user", authResponse.User);
+                    
+                    ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(authResponse.User);
+                    
+                    return true;
+                }
+            }
+            
+            return false;
         }
-
-        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-        
-        if (authResponse != null)
+        catch
         {
-            await _localStorage.SetItemAsync("authToken", authResponse.Token);
-            await _localStorage.SetItemAsync("refreshToken", authResponse.RefreshToken);
-            await _localStorage.SetItemAsync("user", authResponse.User);
-            
-            _httpClient.DefaultRequestHeaders.Authorization = 
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse.Token);
-            
-            ((CustomAuthenticationStateProvider)_authenticationStateProvider).NotifyUserAuthentication(authResponse.User);
+            return false;
         }
-
-        return authResponse!;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
+    public async Task<bool> RegisterAsync(RegisterDto registerDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/auth/register", request);
-        
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            throw new ApplicationException($"Registration failed: {errorContent}");
+            var response = await _httpClient.PostAsJsonAsync("api/auth/register", registerDto);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                
+                if (authResponse != null)
+                {
+                    await _localStorage.SetItemAsync("accessToken", authResponse.AccessToken);
+                    await _localStorage.SetItemAsync("refreshToken", authResponse.RefreshToken);
+                    await _localStorage.SetItemAsync("user", authResponse.User);
+                    
+                    ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(authResponse.User);
+                    
+                    return true;
+                }
+            }
+            
+            return false;
         }
-
-        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-        
-        if (authResponse != null)
+        catch
         {
-            await _localStorage.SetItemAsync("authToken", authResponse.Token);
-            await _localStorage.SetItemAsync("refreshToken", authResponse.RefreshToken);
-            await _localStorage.SetItemAsync("user", authResponse.User);
-            
-            _httpClient.DefaultRequestHeaders.Authorization = 
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse.Token);
-            
-            ((CustomAuthenticationStateProvider)_authenticationStateProvider).NotifyUserAuthentication(authResponse.User);
+            return false;
         }
-
-        return authResponse!;
     }
 
     public async Task LogoutAsync()
     {
-        await _localStorage.RemoveItemAsync("authToken");
+        await _localStorage.RemoveItemAsync("accessToken");
         await _localStorage.RemoveItemAsync("refreshToken");
         await _localStorage.RemoveItemAsync("user");
         
-        _httpClient.DefaultRequestHeaders.Authorization = null;
-        
-        ((CustomAuthenticationStateProvider)_authenticationStateProvider).NotifyUserLogout();
+        ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
     }
+}
 
-    public async Task<bool> IsAuthenticatedAsync()
-    {
-        var token = await _localStorage.GetItemAsync<string>("authToken");
-        return !string.IsNullOrEmpty(token);
-    }
+public class LoginDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
 
-    public async Task<string?> GetTokenAsync()
-    {
-        return await _localStorage.GetItemAsync<string>("authToken");
-    }
+public class RegisterDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+}
+
+public class AuthResponseDto
+{
+    public string AccessToken { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
+    public string TokenType { get; set; } = "Bearer";
+    public int ExpiresIn { get; set; } = 3600;
+    public UserDto User { get; set; } = null!;
+}
+
+public class UserDto
+{
+    public Guid Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string? ProfileImageUrl { get; set; }
 }

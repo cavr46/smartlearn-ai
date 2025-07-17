@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZpegHNLZw68=",
+  "success": true,
+  "projectFilePath": "/workspaces/smartlearn-ai/src/SmartLearn.Domain/SmartLearn.Domain.csproj",
+  "expectedPackageFiles": [
+    "/home/codespace/.nuget/packages/fluentvalidation/11.9.0/fluentvalidation.11.9.0.nupkg.sha512",
+    "/home/codespace/.nuget/packages/mediatr/12.2.0/mediatr.12.2.0.nupkg.sha512",
+    "/home/codespace/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/codespace/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,25 +1,33 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using SmartLearn.Application.DTOs;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace SmartLearn.Blazor.Services;
 
 public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly ILocalStorageService _localStorage;
+    private readonly HttpClient _httpClient;
 
-    public CustomAuthenticationStateProvider(ILocalStorageService localStorage)
+    public CustomAuthenticationStateProvider(ILocalStorageService localStorage, HttpClient httpClient)
     {
         _localStorage = localStorage;
+        _httpClient = httpClient;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _localStorage.GetItemAsync<string>("authToken");
-        var user = await _localStorage.GetItemAsync<UserDto>("user");
+        var token = await _localStorage.GetItemAsync<string>("accessToken");
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        }
 
-        if (string.IsNullOrEmpty(token) || user == null)
+        var user = await _localStorage.GetItemAsync<UserDto>("user");
+        
+        if (user == null)
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
@@ -30,17 +38,21 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             new Claim(ClaimTypes.Name, user.FullName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role),
-            new Claim(ClaimTypes.GivenName, user.FirstName),
-            new Claim(ClaimTypes.Surname, user.LastName)
+            new Claim("FirstName", user.FirstName),
+            new Claim("LastName", user.LastName)
         };
 
         var identity = new ClaimsIdentity(claims, "jwt");
         var principal = new ClaimsPrincipal(identity);
 
+        // Set the authorization header
+        _httpClient.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
         return new AuthenticationState(principal);
     }
 
-    public void NotifyUserAuthentication(UserDto user)
+    public void MarkUserAsAuthenticated(UserDto user)
     {
         var claims = new List<Claim>
         {
@@ -48,8 +60,8 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             new Claim(ClaimTypes.Name, user.FullName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role),
-            new Claim(ClaimTypes.GivenName, user.FirstName),
-            new Claim(ClaimTypes.Surname, user.LastName)
+            new Claim("FirstName", user.FirstName),
+            new Claim("LastName", user.LastName)
         };
 
         var identity = new ClaimsIdentity(claims, "jwt");
@@ -58,9 +70,13 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
     }
 
-    public void NotifyUserLogout()
+    public void MarkUserAsLoggedOut()
     {
-        var principal = new ClaimsPrincipal(new ClaimsIdentity());
+        var identity = new ClaimsIdentity();
+        var principal = new ClaimsPrincipal(identity);
+
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(principal)));
     }
 }

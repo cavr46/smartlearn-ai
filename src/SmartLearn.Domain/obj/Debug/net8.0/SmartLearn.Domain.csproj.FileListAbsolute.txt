@@ -1,0 +1,6 @@
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.csproj.AssemblyReference.cache
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.AssemblyInfoInputs.cache
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.AssemblyInfo.cs
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.csproj.CoreCompileInputs.cache
+/workspaces/smartlearn-ai/src/SmartLearn.Domain/obj/Debug/net8.0/SmartLearn.Domain.sourcelink.json

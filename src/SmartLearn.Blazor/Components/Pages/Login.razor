@@ -1,0 +1,74 @@
+@page "/login"
+@using SmartLearn.Blazor.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Login - SmartLearn AI</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudCard>
+        <MudCardContent>
+            <MudForm @ref="form" Model="@model" @onsubmit="OnSubmit">
+                <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">
+                    Welcome to SmartLearn AI
+                </MudText>
+                
+                <MudTextField 
+                    @bind-Value="model.Email"
+                    Label="Email"
+                    Variant="Variant.Outlined"
+                    InputType="InputType.Email"
+                    Required="true"
+                    RequiredError="Email is required"
+                    Class="mb-4" />
+                
+                <MudTextField 
+                    @bind-Value="model.Password"
+                    Label="Password"
+                    Variant="Variant.Outlined"
+                    InputType="InputType.Password"
+                    Required="true"
+                    RequiredError="Password is required"
+                    Class="mb-4" />
+                
+                <MudButton 
+                    ButtonType="ButtonType.Submit" 
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    FullWidth="true"
+                    Class="mb-4">
+                    Login
+                </MudButton>
+                
+                <MudText Align="Align.Center">
+                    Don't have an account? 
+                    <MudLink Href="/register">Register here</MudLink>
+                </MudText>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private MudForm form;
+    private LoginDto model = new();
+
+    private async Task OnSubmit()
+    {
+        if (form.IsValid)
+        {
+            var success = await AuthService.LoginAsync(model);
+            
+            if (success)
+            {
+                Navigation.NavigateTo("/dashboard");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Login failed. Please check your credentials.");
+            }
+        }
+    }
+}
